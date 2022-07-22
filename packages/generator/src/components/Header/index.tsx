@@ -1,4 +1,4 @@
-import React, { Fragment, memo } from 'react'
+import React, { Fragment, memo, useCallback } from 'react'
 import styles from './index.module.css'
 import cx from 'classnames'
 import { Upload, message, Modal } from 'antd'
@@ -8,6 +8,9 @@ import {
   EditOutlined,
   CompressOutlined,
   ExclamationCircleOutlined,
+  SettingOutlined,
+  SaveOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons'
 import {
   componentsFoldAtom,
@@ -17,8 +20,9 @@ import {
   optionsAtom,
   IsSavedAtom,
   editJsonAtom,
+  controlVisibleAtom,
 } from '@generator/store'
-import { useSetRecoilState, useRecoilValue, useRecoilCallback } from 'recoil'
+import { useSetRecoilState, useRecoilState,useRecoilValue, useRecoilCallback } from 'recoil'
 import { useSaveJson } from '@generator/hooks'
 import FileSaver from 'file-saver'
 import type { RcFile } from 'rc-upload/lib/interface'
@@ -26,6 +30,7 @@ const { confirm } = Modal
 const Header = () => {
   const setFold = useSetRecoilState(componentsFoldAtom)
   const setPreviewVisible = useSetRecoilState(previewVisibleAtom)
+  const [controlVisible,setControlVisible] = useRecoilState(controlVisibleAtom)
   const {
     headerConfig: {
       customExport,
@@ -36,6 +41,7 @@ const Header = () => {
       showEditJSON,
       showPreviewForm,
       showExportJSON,
+      showControl
     },
   } = useRecoilValue(optionsAtom)
   const setUnitedSchema = useSetRecoilState(schemaAtom)
@@ -61,6 +67,10 @@ const Header = () => {
       }
     })
   }
+
+  const setControl = useCallback(()=>{
+    setControlVisible(true)
+  },[setControlVisible])
 
   const editJson = () => {
     setFold(true)
@@ -112,6 +122,14 @@ const Header = () => {
     [customExport, exportText, saveJson]
   )
 
+  const onSaveControl = useCallback(()=>{
+    setControlVisible(false)
+  },[setControlVisible])
+
+  const onCloseControl = useCallback(()=>{
+    setControlVisible(false)
+  },[setControlVisible])
+
   return (
     <div className={styles.header}>
       <div className={styles.logo}>
@@ -128,38 +146,71 @@ const Header = () => {
             </Fragment>
           ))}
       </div>
-
       <div className={styles.btncontainer}>
-        {showUploadJSON && (
-          <Upload
-            accept="json"
-            multiple={false}
-            showUploadList={false}
-            beforeUpload={importJson}
-          >
-            <div className={cx(styles.btn, styles.text)}>
-              <DownloadOutlined />
-              <span className="ml-1">导入JSON</span>
+        {controlVisible ? (
+          <>
+            <div
+              onClick={onCloseControl}
+              className={cx(styles.btn, styles.text)}
+            >
+              <LogoutOutlined />
+              <span className="ml-1">取消</span>
             </div>
-          </Upload>
-        )}
-        {showEditJSON && (
-          <div onClick={editJson} className={cx(styles.btn, styles.text)}>
-            <EditOutlined />
-            <span className="ml-1">JSON编辑</span>
-          </div>
-        )}
-        {showPreviewForm && (
-          <div onClick={preview} className={cx(styles.btn, styles.text)}>
-            <CompressOutlined />
-            <span className="ml-1">表单预览</span>
-          </div>
-        )}
-        {showExportJSON && (
-          <div onClick={exportJson} className={cx(styles.btn, styles.primary)}>
-            <UploadOutlined />
-            <span className="ml-1">{exportText}</span>
-          </div>
+              <div onClick={preview} className={cx(styles.btn, styles.text)}>
+                <CompressOutlined />
+                <span className="ml-1">测试联动</span>
+              </div>
+            <div
+              onClick={onSaveControl}
+              className={cx(styles.btn, styles.primary)}
+            >
+              <SaveOutlined />
+              <span className="ml-1">保存联动配置并退出</span>
+            </div>
+          </>
+        ) : (
+          <>
+            {showControl && (
+              <div onClick={setControl} className={cx(styles.btn, styles.text)}>
+                <SettingOutlined />
+                <span className="ml-1">配置联动</span>
+              </div>
+            )}
+            {showUploadJSON && (
+              <Upload
+                accept="json"
+                multiple={false}
+                showUploadList={false}
+                beforeUpload={importJson}
+              >
+                <div className={cx(styles.btn, styles.text)}>
+                  <DownloadOutlined />
+                  <span className="ml-1">导入JSON</span>
+                </div>
+              </Upload>
+            )}
+            {showEditJSON && (
+              <div onClick={editJson} className={cx(styles.btn, styles.text)}>
+                <EditOutlined />
+                <span className="ml-1">JSON编辑</span>
+              </div>
+            )}
+            {showPreviewForm && (
+              <div onClick={preview} className={cx(styles.btn, styles.text)}>
+                <CompressOutlined />
+                <span className="ml-1">表单预览</span>
+              </div>
+            )}
+            {showExportJSON && (
+              <div
+                onClick={exportJson}
+                className={cx(styles.btn, styles.primary)}
+              >
+                <UploadOutlined />
+                <span className="ml-1">{exportText}</span>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

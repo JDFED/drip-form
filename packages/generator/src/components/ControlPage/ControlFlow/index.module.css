@@ -1,0 +1,34 @@
+.addbutton {
+  @apply mt-8;
+}
+
+.addeffectbutton {
+  @apply ml-24;
+}
+
+.title {
+  @apply text-base font-bold;
+}
+
+.condintion,
+.action {
+  @apply flex flex-row items-center mt-2 mb-2 ml-10;
+}
+
+.subtitle {
+  @apply mr-4;
+}
+
+.logicoperatorButton {
+  @apply ml-2;
+}
+
+.logicoperator {
+  @apply ml-24;
+}
+
+.deleteicon {
+  @apply ml-2 cursor-pointer
+}
+
+

@@ -3,7 +3,7 @@
  * @Author: jiangxiaowei
  * @Date: 2021-07-30 16:35:48
  * @Last Modified by: jiangxiaowei
- * @Last Modified time: 2022-05-26 16:29:38
+ * @Last Modified time: 2022-07-20 16:50:39
  */
 import React from 'react'
 import { handleMargin } from '@jdfed/utils'
@@ -215,7 +215,7 @@ const Render = ({
       isShow = true
     }
 
-    if (!isShow || !containerMap) return null
+    if ((!isShow || !containerMap)&&formMode!=='generator') return null
     /* 结束 */
     const Container =
       containerMap[type as keyof typeof containerMap] || containerMap.default
